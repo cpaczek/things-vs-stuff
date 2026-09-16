@@ -1,0 +1,55 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "things-vs-stuff",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-06-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  // Custom domain on iar.dev — the zone must live on this Cloudflare account.
+  "routes": [
+    {
+      "pattern": "things.iar.dev",
+      "custom_domain": true
+    }
+  ],
+  // Shared judgment cache: every player on earth reuses the same verdict for the
+  // same concept on the same day. Create with:
+  //   npx wrangler kv namespace create JUDGE_CACHE
+  // then paste the returned id below.
+  "kv_namespaces": [
+    {
+      "binding": "JUDGE_CACHE",
+      "id": "db6c377555884ffe826c084667b053ef"
+    }
+  ],
+  // Per-IP rate limiting (native binding — works across isolates/colos).
+  // LOOSE gates every API request; STRICT gates only cache-missing calls
+  // that would hit the paid TypeSafe API. Legit players live in cache and
+  // never feel either.
+  "ratelimits": [
+    {
+      "name": "RL_LOOSE",
+      "namespace_id": "1001",
+      "simple": { "limit": 120, "period": 60 }
+    },
+    {
+      "name": "RL_STRICT",
+      "namespace_id": "1002",
+      "simple": { "limit": 15, "period": 60 }
+    }
+  ],
+  // Free custom game metrics (judgments, cache hits, inventions, wins…).
+  // ⚠️ Requires one-time account enable first:
+  //   https://dash.cloudflare.com/ac216c4d4073532321185d9cce3b0fdc/workers/analytics-engine
+  // then uncomment and `npm run deploy`. metric() calls no-op until bound.
+  // "analytics_engine_datasets": [
+  //   { "binding": "GAME_METRICS", "dataset": "things_vs_stuff" }
+  // ],
+  // Free Workers request/error/CPU observability + logs.
+  "observability": {
+    "enabled": true
+  }
+}
