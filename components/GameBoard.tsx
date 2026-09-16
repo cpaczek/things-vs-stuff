@@ -217,10 +217,11 @@ export default function GameBoard({
     let lastHud = 0;
 
     const tick = (ts: number) => {
-      const dt = Math.min(0.05, (ts - last) / 1000) * speedRef.current;
+      const wallDt = Math.min(0.05, (ts - last) / 1000);
+      const dt = wallDt * speedRef.current;
       last = ts;
 
-      engine.update(dt);
+      engine.update(dt, wallDt);
       const events = engine.drainEvents();
       for (const ev of events) {
         if ((ev.type === "victory" || ev.type === "defeat") && !overRef.current) {
@@ -598,7 +599,7 @@ export default function GameBoard({
         ? "invent a thing to fight with"
         : "place your things, then sound the alarm"
       : hud.phase === "break"
-        ? `wave ${hud.wave} cleared!`
+        ? `wave ${hud.wave} cleared! next in ${hud.breakLeft}s`
         : hud.phase === "combat"
           ? `wave ${hud.wave}/${config.waves.length}`
           : hud.phase === "won"

@@ -23,7 +23,8 @@ export const ECONOMY = {
   FUSE_COST: 15,
   /** Hand capacity. Nothing is dealt — every card is player-invented. */
   HAND_SIZE: 8,
-  WAVE_BREAK_S: 2.5,
+  /** Pause between waves, in REAL seconds — never scaled by the speed multiplier. */
+  WAVE_BREAK_S: 20,
   /** Energy bonus for calling the next wave early: base + per-wave. */
   RUSH_BONUS_BASE: 5,
   RUSH_BONUS_PER_WAVE: 1,
@@ -300,12 +301,17 @@ export class Engine {
     });
   }
 
-  update(dt: number) {
+  /**
+   * @param dt     simulated seconds for this step (already multiplied by the speed setting)
+   * @param wallDt real seconds elapsed this step. The wave break counts down on this so it
+   *               lasts WAVE_BREAK_S regardless of the speed multiplier. Defaults to dt.
+   */
+  update(dt: number, wallDt: number = dt) {
     if (this.phase === "won" || this.phase === "lost") return;
     this.time += dt;
 
     if (this.phase === "break") {
-      this.breakTimer -= dt;
+      this.breakTimer -= wallDt;
       if (this.breakTimer <= 0) this.startWave(this.waveIndex + 1);
     }
 
