@@ -1,5 +1,10 @@
 # 🗼 THINGS vs STUFF
 
+https://things.iar.dev
+
+<img width="1621" height="1177" alt="image" src="https://github.com/user-attachments/assets/04d07947-9698-41bb-92aa-b1aa3d80a345" />
+
+
 A daily doodle tower-defense where **anything can fight anything** — because no damage
 table exists, and no tower list either. You **type** every THING you fight with, and every
 tower-vs-enemy matchup is decided live by the [TypeSafe](https://typesafe.ai) judgment API
